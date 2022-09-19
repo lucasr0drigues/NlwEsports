@@ -4,6 +4,7 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Check, GameController } from "phosphor-react";
 import { Input } from "./Form/Input";
 import { FormEvent, useEffect, useState } from "react";
+import axios from "axios";
 
 interface Game {
   id: string;
@@ -13,24 +14,45 @@ interface Game {
 export function CreateAdModal() {
   const [games, setGames] = useState<Game[]>([]);
   const [weekDays, setWeekDays] = useState<string[]>([]);
+  const [useVoiceChannel, setUseVoiceChannel] = useState(false);
 
   console.log(weekDays);
 
   useEffect(() => {
-    fetch("http://localhost:3333/games")
-      .then((response) => response.json())
-      .then((data) => {
-        setGames(data);
-      });
+    axios("http://localhost:3333/games").then((response) => {
+      setGames(response.data);
+    });
   }, []);
 
-  function handleCreateAd(event: FormEvent) {
+  async function handleCreateAd(event: FormEvent) {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
 
-    console.log(data);
+    if (!data.name) {
+      return;
+    }
+
+    try {
+      await axios.post(`http://localhost:3333/games/${data.game}/ads`, {
+        name: data.name,
+        yearsPlaying: Number(data.yearsPlaying),
+        discord: data.discord,
+        weekDays: weekDays.map(Number),
+        hourStart: data.hourStart,
+        hourEnd: data.hourEnd,
+        useVoiceChannel: useVoiceChannel,
+      });
+      alert("anuncio criado com sucesso");
+    } catch (err) {
+      console.log(err);
+      alert("erro ao criar anúncio");
+    }
+
+    // console.log(data);
+    // console.log(weekDays);
+    // console.log(useVoiceChannel);
   }
 
   return (
@@ -187,7 +209,17 @@ export function CreateAdModal() {
             </div>
           </div>
           <label className="mt-2 flex items-center gap-2 text-sm">
-            <Checkbox.Root className="w-6 h-6 p-1 rounded bg-zinc-900">
+            <Checkbox.Root
+              checked={useVoiceChannel}
+              onCheckedChange={(checked) => {
+                if (checked === true) {
+                  setUseVoiceChannel(true);
+                } else {
+                  setUseVoiceChannel(false);
+                }
+              }}
+              className="w-6 h-6 p-1 rounded bg-zinc-900"
+            >
               <Checkbox.Indicator>
                 <Check className="w-4 h-4 text-emerald-400" />
               </Checkbox.Indicator>
