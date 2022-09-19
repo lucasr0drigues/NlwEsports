@@ -1,5 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Checkbox from "@radix-ui/react-checkbox";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Check, GameController } from "phosphor-react";
 import { Input } from "./Form/Input";
 import { useEffect, useState } from "react";
@@ -11,6 +12,9 @@ interface Game {
 
 export function CreateAdModal() {
   const [games, setGames] = useState<Game[]>([]);
+  const [weekDays, setWeekDays] = useState<string[]>([]);
+
+  console.log(weekDays);
 
   useEffect(() => {
     fetch("http://localhost:3333/games")
@@ -35,8 +39,9 @@ export function CreateAdModal() {
             <select
               id="game"
               className="bg-zinc-900 py-3 px-4 rounded text-sm placeholder:text-zinc-500 appearance-none"
+              defaultValue=""
             >
-              <option disabled selected value="">
+              <option disabled value="">
                 Selecione o game que deseja jogar
               </option>
 
@@ -71,31 +76,78 @@ export function CreateAdModal() {
             <div className="flex flex-col gap-2">
               <label htmlFor="weekDays">Quando costumar jogar?</label>
 
-              <div className="grid grid-cols-4 gap-2">
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Domingo">
+              <ToggleGroup.Root
+                type="multiple"
+                className="grid grid-cols-4 gap-2"
+                value={weekDays}
+                onValueChange={setWeekDays}
+              >
+                <ToggleGroup.Item
+                  value="0"
+                  title="Domingo"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("0") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                >
                   D
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Segunda">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="1"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("1") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Segunda"
+                >
                   S
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Terça">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="2"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("2") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Terça"
+                >
                   T
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Quarta">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="3"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("3") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Quarta"
+                >
                   Q
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Quinta">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="4"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("4") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Quinta"
+                >
                   Q
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Sexta">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="5"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("5") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Sexta"
+                >
                   S
-                </button>
-                <button className="w-8 h-8 rounded bg-zinc-900" title="Sábado">
+                </ToggleGroup.Item>
+                <ToggleGroup.Item
+                  value="6"
+                  className={`w-8 h-8 rounded ${
+                    weekDays.includes("6") ? "bg-violet-500" : "bg-zinc-900"
+                  }`}
+                  title="Sábado"
+                >
                   S
-                </button>
-              </div>
+                </ToggleGroup.Item>
+              </ToggleGroup.Root>
             </div>
-            <div className="flex flex-col gap-2" flex-1>
+            <div className="flex flex-col gap-2 flex-1">
               <label htmlFor="hourStart">Qual o horário do dia?</label>
               <div className="grid grid-cols-2 gap-2">
                 <Input id="hourStart" type="time" placeholder="De" />
@@ -103,14 +155,14 @@ export function CreateAdModal() {
               </div>
             </div>
           </div>
-          <div className="mt-2 flex items-center gap-2 text-sm">
+          <label className="mt-2 flex items-center gap-2 text-sm">
             <Checkbox.Root className="w-6 h-6 p-1 rounded bg-zinc-900">
               <Checkbox.Indicator>
                 <Check className="w-4 h-4 text-emerald-400" />
               </Checkbox.Indicator>
             </Checkbox.Root>
             Costumo me conectar ao chat de voz"
-          </div>
+          </label>
           <footer className="mt-4 flex justify-end gap-4">
             <Dialog.Close
               type="button"
